@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuthQRForge</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+    body {
+      background: #0d1117;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 16px;
+      color: #e6edf3;
+    }
+    .card {
+      background: #161b22;
+      max-width: 860px;
+      width: 100%;
+      border-radius: 28px;
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
+      padding: 28px 32px 32px;
+      border: 1px solid #30363d;
+    }
+    h1 {
+      margin: 0 0 4px 0;
+      font-weight: 600;
+      font-size: 2rem;
+      letter-spacing: -0.02em;
+      color: #f0f6fc;
+    }
+    .subhead {
+      color: #8b949e;
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+      border-left: 4px solid #1f6feb;
+      padding-left: 14px;
+    }
+    .tab-bar {
+      display: flex;
+      gap: 6px;
+      background: #0d1117;
+      padding: 5px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      border: 1px solid #30363d;
+    }
+    .tab-button {
+      flex: 1;
+      padding: 12px 18px;
+      border: none;
+      background: transparent;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #8b949e;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      letter-spacing: 0.2px;
+    }
+    .tab-button:hover {
+      background: #21262d;
+      color: #e6edf3;
+    }
+    .tab-button.active {
+      background: #21262d;
+      color: #f0f6fc;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .panel {
+      background: #0d1117;
+      border-radius: 20px;
+      padding: 24px 24px 28px;
+      border: 1px solid #30363d;
+      box-shadow: inset 0 1px 3px rgba(255,255,255,0.02), 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .section-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #f0f6fc;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title span {
+      background: #1f6feb;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 2px 10px;
+      color: #ffffff;
+      letter-spacing: 0.02em;
+    }
+    .field-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-bottom: 18px;
+      align-items: flex-end;
+    }
+    .field-group {
+      flex: 1 1 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #8b949e;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    input {
+      background: #161b22;
+      border: 1.5px solid #30363d;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-weight: 500;
+      color: #e6edf3;
+    }
+    input:focus {
+      border-color: #1f6feb;
+      box-shadow: 0 0 0 4px rgba(31, 111, 235, 0.25);
+    }
+    input::placeholder {
+      color: #6e7681;
+      font-weight: 400;
+    }
+    .debug-input {
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      letter-spacing: 1px;
+      font-size: 1.2rem;
+    }
+    button {
+      background: #1f6feb;
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      box-shadow: 0 4px 8px rgba(31, 111, 235, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.2px;
+    }
+    button:hover {
+      background: #388bfd;
+    }
+    button:active {
+      transform: scale(0.97);
+    }
+    .download-btn {
+      background: #238636;
+      box-shadow: 0 4px 8px rgba(35, 134, 54, 0.3);
+      padding: 12px 20px;
+    }
+    .download-btn:hover {
+      background: #2ea043;
+    }
+    .qr-section {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 28px;
+      margin-top: 10px;
+    }
+    .qr-canvas-wrapper {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 12px;
+      box-shadow: 0 8px 18px -6px rgba(0, 0, 0, 0.5);
+      border: 1px solid #30363d;
+      display: inline-block;
+      line-height: 0;
+    }
+    canvas {
+      border-radius: 16px;
+      width: 180px;
+      height: 180px;
+      display: block;
+      background: white;
+      image-rendering: crisp-edges;
+    }
+    .key-display {
+      background: #161b22;
+      border-radius: 18px;
+      padding: 16px 20px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: #58a6ff;
+      border: 1px dashed #1f6feb;
+      word-break: break-all;
+      flex: 1;
+      min-width: 200px;
+    }
+    .key-display small {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      color: #8b949e;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .debug-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    .debug-input-area {
+      flex: 2 1 240px;
+    }
+    .validation-badge {
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 40px;
+      background: #21262d;
+      color: #8b949e;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+      border: 1px solid #30363d;
+    }
+    .valid {
+      background: #1a4d2e;
+      color: #7ee787;
+      border-color: #238636;
+    }
+    .invalid {
+      background: #4d1a1a;
+      color: #ff7b72;
+      border-color: #da3633;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>AuthQRForge</h1>
+  <div class="subhead">TOTP QR generator and code validation</div>
+
+  <div class="tab-bar">
+    <button class="tab-button active" data-tab="config">Configuration</button>
+    <button class="tab-button" data-tab="debug">Debug</button>
+  </div>
+
+  <!-- CONFIGURATION TAB -->
+  <div id="tab-config" class="tab-content active">
+    <div class="panel">
+      <div class="section-title">Configuration <span>issuer and account</span></div>
+      <div class="field-row">
+        <div class="field-group">
+          <label>Issuer</label>
+          <input type="text" id="issuerInput" placeholder="e.g. AuthQRForge" value="AuthQRForge" autocomplete="off">
+        </div>
+        <div class="field-group">
+          <label>Account</label>
+          <input type="text" id="accountInput" placeholder="e.g. user@forge" value="demo@authqrforge" autocomplete="off">
+        </div>
+        <button id="generateBtn">Generate</button>
+      </div>
+
+      <div class="qr-section">
+        <div class="qr-canvas-wrapper">
+          <canvas id="qrCanvas" width="180" height="180"></canvas>
+        </div>
+        <div class="key-display" id="secretDisplay">
+          <small>Setup key (secret)</small>
+          <span id="secretValue">—</span>
+        </div>
+      </div>
+
+      <div style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap;">
+        <button id="downloadBtn" class="download-btn">Download PNG</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEBUG TAB -->
+  <div id="tab-debug" class="tab-content">
+    <div class="panel">
+      <div class="section-title">Debug <span>verify code against current secret</span></div>
+      <div class="debug-row">
+        <div class="debug-input-area">
+          <input type="text" id="codeInput" class="debug-input" placeholder="6 digit" maxlength="6" inputmode="numeric" autocomplete="off">
+        </div>
+        <div>
+          <div id="validationMessage" class="validation-badge">enter code to verify</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://authqrforge.github.io/api/authqrforge.js"></script>
+<script>
+  (function(){
+    // ---------- TABS ----------
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = {
+      config: document.getElementById('tab-config'),
+      debug: document.getElementById('tab-debug')
+    };
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.tab;
+        tabButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        Object.keys(tabContents).forEach(key => {
+          tabContents[key].classList.toggle('active', key === target);
+        });
+      });
+    });
+
+    // ---------- ELEMENTS ----------
+    const canvas = document.getElementById('qrCanvas');
+    const issuerInput = document.getElementById('issuerInput');
+    const accountInput = document.getElementById('accountInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const secretValueSpan = document.getElementById('secretValue');
+    const codeInput = document.getElementById('codeInput');
+    const validationMessage = document.getElementById('validationMessage');
+
+    let currentSecret = '';
+    let currentIssuer = '';
+    let currentAccount = '';
+
+    // ---------- MAIN GENERATE ----------
+    function generate() {
+      const issuer = issuerInput.value.trim() || 'AuthQRForge';
+      const account = accountInput.value.trim() || 'demo@authqrforge';
+
+      const result = AuthQRForge.generate(issuer, account, { length: 26 });
+      currentSecret = result.secret;
+      currentIssuer = issuer;
+      currentAccount = account;
+      secretValueSpan.textContent = currentSecret;
+
+      AuthQRForge.drawQR(canvas, result.uri, {
+        foreground: '#0d1117',
+        background: '#ffffff'
+      });
+
+      validateCode();
+    }
+
+    // ---------- DOWNLOAD PNG ----------
+    function downloadPng() {
+      if (!currentSecret) return;
+      const safeIssuer = (currentIssuer || 'issuer').replace(/[^a-z0-9]/gi, '_');
+      const safeAccount = (currentAccount || 'account').replace(/[^a-z0-9]/gi, '_');
+      const filename = `${safeIssuer}_${safeAccount}_AuthQRForge.png`;
+
+      AuthQRForge.downloadPng(canvas, { filename });
+    }
+
+    // ---------- VALIDATE CODE ----------
+    function validateCode() {
+      const raw = codeInput.value.trim();
+
+      if (raw.length === 0) {
+        validationMessage.className = 'validation-badge';
+        validationMessage.textContent = 'enter code to verify';
+        return;
+      }
+
+      if (!/^\d{6}$/.test(raw)) {
+        validationMessage.className = 'validation-badge invalid';
+        validationMessage.textContent = 'invalid format';
+        return;
+      }
+
+      if (!currentSecret) {
+        validationMessage.className = 'validation-badge invalid';
+        validationMessage.textContent = 'no secret generated yet';
+        return;
+      }
+
+      const result = AuthQRForge.verify(currentSecret, raw, { window: 1 });
+      if (result.valid) {
+        validationMessage.className = 'validation-badge valid';
+        validationMessage.textContent = 'code is valid';
+      } else if (result.reason === 'invalid_format') {
+        validationMessage.className = 'validation-badge invalid';
+        validationMessage.textContent = 'invalid format';
+      } else {
+        validationMessage.className = 'validation-badge invalid';
+        validationMessage.textContent = 'code does not match';
+      }
+    }
+
+    // ---------- EVENT LISTENERS ----------
+    generateBtn.addEventListener('click', generate);
+    downloadBtn.addEventListener('click', downloadPng);
+
+    issuerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') generate(); });
+    accountInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') generate(); });
+
+    codeInput.addEventListener('input', () => {
+      codeInput.value = codeInput.value.replace(/\D/g, '').slice(0, 6);
+      validateCode();
+    });
+    codeInput.addEventListener('blur', validateCode);
+
+    // ---------- INITIAL ----------
+    window.addEventListener('load', () => {
+      generate();
+    });
+
+    window.AuthQRForgeDemo = { generate, validateCode, downloadPng };
+  })();
+</script>
+</body>
+</html>
