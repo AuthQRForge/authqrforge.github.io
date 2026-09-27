@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AuthQRForge API Reference</title>
+  <style>
+    body {
+      background: #0d1117;
+      color: #e6edf3;
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 32px 24px;
+      line-height: 1.6;
+    }
+    .wrap { max-width: 860px; margin: 0 auto; }
+    h1 { color: #f0f6fc; font-weight: 600; margin-bottom: 4px; }
+    h2 {
+      color: #f0f6fc;
+      font-weight: 600;
+      margin-top: 40px;
+      margin-bottom: 8px;
+      font-size: 1.15rem;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      border-bottom: 1px solid #30363d;
+      padding-bottom: 8px;
+    }
+    p { color: #c9d1d9; margin: 8px 0; }
+    ul { color: #c9d1d9; margin: 8px 0; padding-left: 22px; }
+    li { margin: 4px 0; }
+    code {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.85em;
+      color: #79c0ff;
+    }
+    .sig {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.85rem;
+      color: #7ee787;
+      margin: 10px 0 12px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+
+<h1>AuthQRForge API Reference</h1>
+<p class="sub">You can access the API at <a href="https://authqrforge.github.io/api/authqrforge.js">https://authqrforge.github.io/api/authqrforge.js</a></p>
+
+<h2>AuthQRForge.generateSecret(options)</h2>
+<span class="sig">AuthQRForge.generateSecret(options) → string</span>
+<p>Generates a cryptographically random Base32 secret suitable for TOTP.</p>
+<ul>
+  <li><code>options.length</code> — number of characters (default <code>26</code>).</li>
+</ul>
+
+<h2>AuthQRForge.buildUri(issuer, account, secret)</h2>
+<span class="sig">AuthQRForge.buildUri(issuer, account, secret) → string</span>
+<p>Builds the <code>otpauth://totp/</code> URI that authenticator apps scan or import.</p>
+<ul>
+  <li><code>issuer</code> — the app or service name.</li>
+  <li><code>account</code> — the user identifier (email, username, etc.).</li>
+  <li><code>secret</code> — Base32 secret.</li>
+</ul>
+
+<h2>AuthQRForge.generate(issuer, account, options)</h2>
+<span class="sig">AuthQRForge.generate(issuer, account, options) → { secret, uri, issuer, account }</span>
+<p>Convenience wrapper. Creates a new secret and returns it together with the URI and identity in one call.</p>
+<ul>
+  <li><code>options.secret</code> — supply your own secret instead of generating one.</li>
+  <li><code>options.length</code> — length of the generated secret (default <code>26</code>).</li>
+</ul>
+
+<h2>AuthQRForge.getCode(secret, options)</h2>
+<span class="sig">AuthQRForge.getCode(secret, options) → string</span>
+<p>Returns the TOTP code that is valid right now for the given secret.</p>
+<ul>
+  <li><code>options.period</code> — time step in seconds (default <code>30</code>).</li>
+  <li><code>options.digits</code> — number of digits (default <code>6</code>).</li>
+  <li><code>options.timestamp</code> — milliseconds since epoch (default <code>Date.now()</code>).</li>
+</ul>
+
+<h2>AuthQRForge.verify(secret, code, options)</h2>
+<span class="sig">AuthQRForge.verify(secret, code, options) → { valid, reason }</span>
+<p>Checks whether a user-supplied code matches the secret. Returns a result object describing success or failure.</p>
+<ul>
+  <li><code>options.window</code> — number of time steps to accept on each side (default <code>1</code>).</li>
+  <li><code>options.period</code> — time step in seconds (default <code>30</code>).</li>
+  <li><code>options.digits</code> — number of digits (default <code>6</code>).</li>
+  <li><code>options.timestamp</code> — milliseconds since epoch (default <code>Date.now()</code>).</li>
+</ul>
+<p>Possible <code>reason</code> values: <code>"match"</code>, <code>"no_match"</code>, <code>"invalid_format"</code>, <code>"missing_secret"</code>.</p>
+
+<h2>AuthQRForge.drawQR(canvas, uri, options)</h2>
+<span class="sig">AuthQRForge.drawQR(canvas, uri, options) → boolean</span>
+<p>Renders a QR code for the given URI onto an existing <code>&lt;canvas&gt;</code> element.</p>
+<ul>
+  <li><code>canvas</code> — a DOM canvas element to draw into.</li>
+  <li><code>uri</code> — the <code>otpauth://</code> URI to encode.</li>
+  <li><code>options.foreground</code> — module color (default <code>"#000000"</code>).</li>
+  <li><code>options.background</code> — background color (default <code>"#ffffff"</code>).</li>
+</ul>
+<p>Returns <code>true</code> on success, <code>false</code> if the payload is too large.</p>
+
+<h2>AuthQRForge.downloadPng(canvas, options)</h2>
+<span class="sig">AuthQRForge.downloadPng(canvas, options) → void</span>
+<p>Triggers a browser download of the canvas contents as a PNG file.</p>
+<ul>
+  <li><code>canvas</code> — the canvas element to export.</li>
+  <li><code>options.filename</code> — download filename (default <code>"qr.png"</code>).</li>
+</ul>
+
+<h2>Copy-and-pasteable HTML demo</h2>
+<pre style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px;overflow:auto;font-family:'SF Mono','Fira Code',monospace;font-size:0.78rem;color:#c9d1d9;line-height:1.55;">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Demo&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h1&gt;Demo&lt;/h1&gt;
+
+&lt;h2&gt;generateSecret&lt;/h2&gt;
+&lt;pre id="out1"&gt;—&lt;/pre&gt;
+&lt;button onclick="run1()"&gt;Run&lt;/button&gt;
+
+&lt;h2&gt;buildUri&lt;/h2&gt;
+&lt;pre id="out2"&gt;—&lt;/pre&gt;
+&lt;button onclick="run2()"&gt;Run&lt;/button&gt;
+
+&lt;h2&gt;generate&lt;/h2&gt;
+&lt;pre id="out3"&gt;—&lt;/pre&gt;
+&lt;button onclick="run3()"&gt;Run&lt;/button&gt;
+
+&lt;h2&gt;getCode&lt;/h2&gt;
+&lt;pre id="out4"&gt;—&lt;/pre&gt;
+&lt;button onclick="run4()"&gt;Run&lt;/button&gt;
+
+&lt;h2&gt;verify&lt;/h2&gt;
+&lt;input id="in5" placeholder="6 digit" maxlength="6" inputmode="numeric"&gt;
+&lt;pre id="out5"&gt;—&lt;/pre&gt;
+&lt;button onclick="run5()"&gt;Verify&lt;/button&gt;
+
+&lt;h2&gt;drawQR&lt;/h2&gt;
+&lt;canvas id="cv6" width="320" height="320"&gt;&lt;/canvas&gt;
+&lt;pre id="out6"&gt;—&lt;/pre&gt;
+&lt;button onclick="run6()"&gt;Run&lt;/button&gt;
+
+&lt;h2&gt;downloadPng&lt;/h2&gt;
+&lt;button onclick="run7()"&gt;Download QR above&lt;/button&gt;
+
+&lt;script src="https://authqrforge.github.io/api/authqrforge.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+let demoSecret = null;
+let demoUri = null;
+
+function run1() {
+  document.getElementById('out1').textContent = AuthQRForge.generateSecret();
+}
+function run2() {
+  const s = AuthQRForge.generateSecret();
+  document.getElementById('out2').textContent = AuthQRForge.buildUri('MyApp', 'user@example.com', s);
+}
+function run3() {
+  const r = AuthQRForge.generate('MyApp', 'user@example.com');
+  demoSecret = r.secret;
+  demoUri = r.uri;
+  document.getElementById('out3').textContent = JSON.stringify(r, null, 2);
+}
+function run4() {
+  const s = demoSecret || AuthQRForge.generateSecret();
+  demoSecret = s;
+  document.getElementById('out4').textContent = AuthQRForge.getCode(s) + '  (secret: ' + s + ')';
+}
+function run5() {
+  const s = demoSecret || AuthQRForge.generateSecret();
+  demoSecret = s;
+  const code = document.getElementById('in5').value;
+  document.getElementById('out5').textContent = JSON.stringify(AuthQRForge.verify(s, code), null, 2);
+}
+function run6() {
+  if (!demoUri) {
+    const r = AuthQRForge.generate('MyApp', 'user@example.com');
+    demoSecret = r.secret;
+    demoUri = r.uri;
+  }
+  const canvas = document.getElementById('cv6');
+  AuthQRForge.drawQR(canvas, demoUri, { foreground: '#0d1117', background: '#ffffff' });
+  document.getElementById('out6').textContent = demoUri;
+}
+function run7() {
+  const canvas = document.getElementById('cv6');
+  AuthQRForge.downloadPng(canvas, { filename: 'authqrforge-demo.png' });
+}
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+</div>
+
+</body>
+</html>
