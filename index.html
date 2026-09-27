@@ -105,6 +105,14 @@
       color: #ffffff;
       letter-spacing: 0.02em;
     }
+    .sub {
+      color: #8b949e;
+      border-left: 4px solid #1f6feb;
+      padding-left: 12px;
+      margin-bottom: 32px;
+    }
+    .sub a { color: #58a6ff; text-decoration: none; }
+    .sub a:hover { text-decoration: underline; }
     .field-row {
       display: flex;
       flex-wrap: wrap;
@@ -276,7 +284,7 @@
   <!-- CONFIGURATION TAB -->
   <div id="tab-config" class="tab-content active">
     <div class="panel">
-      <div class="section-title">Configuration <span>issuer and account</span></div>
+      <div class="section-title">Configuration</div>
       <div class="field-row">
         <div class="field-group">
           <label>Issuer</label>
@@ -308,7 +316,7 @@
   <!-- DEBUG TAB -->
   <div id="tab-debug" class="tab-content">
     <div class="panel">
-      <div class="section-title">Debug <span>verify code against current secret</span></div>
+      <div class="section-title">Debug</div>
       <div class="debug-row">
         <div class="debug-input-area">
           <input type="text" id="codeInput" class="debug-input" placeholder="6 digit" maxlength="6" inputmode="numeric" autocomplete="off">
@@ -316,6 +324,7 @@
         <div>
           <div id="validationMessage" class="validation-badge">enter code to verify</div>
         </div>
+        <p class="sub">Looking for an API? Go to <a href="https://authqrforge.github.io/apireference">https://authqrforge.github.io/apireference</a> for more information.</p>
       </div>
     </div>
   </div>
