@@ -368,7 +368,7 @@
     // ---------- MAIN GENERATE ----------
     function generate() {
       const issuer = issuerInput.value.trim() || 'AuthQRForge';
-      const account = accountInput.value.trim() || 'demo@authqrforge';
+      const account = accountInput.value.trim() || 'email@authqrforge';
 
       const result = AuthQRForge.generate(issuer, account, { length: 26 });
       currentSecret = result.secret;
